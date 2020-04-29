@@ -7,7 +7,25 @@
     "start": "node app.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "author": "Satyajit Dey<satyajit.dey@cefalo.com>",
+  "author": "Satyajit Dey<satyajit@cefalo.com>",
+  "contributors": [
+    {
+      "name": "Ahmed Maruf",
+      "email": "maruf@cefalo.com"
+    },
+    {
+      "name": "Atiqul Alama",
+      "email": "atiqul@cefalo.com"
+    },
+    {
+      "name": "Rezaul Karim",
+      "email": "tito@cefalo.com"
+    },
+    {
+      "name": "Satyajit Dey",
+      "email": "satyajit@cefalo.com"
+    }
+  ],
   "license": "ISC",
   "dependencies": {
     "express": "4.17.1",
