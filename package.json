@@ -2,9 +2,9 @@
   "name": "cms-backend-api",
   "version": "1.0.0",
   "description": "Simple CMS backend",
-  "main": "app.js",
+  "main": "server.js",
   "scripts": {
-    "start": "node app.js",
+    "start": "node server.js",
     "test": "mocha"
   },
   "author": "Satyajit Dey<satyajit@cefalo.com>",
