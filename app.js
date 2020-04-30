@@ -1,9 +1,12 @@
 const express = require('express');
 const logger = require('morgan');
-const config = require('./configs/app.config');
+const bodyParser = require('body-parser');
+const UsersRouter = require('./routes/users.route');
+const appConfig = require('./configs/app.config');
 const app = express();
 
 app.use(logger('combined'));
+
 app.use(function (req, res, next) {
     res.header('Access-Control-Allow-Origin', '*');
     res.header('Access-Control-Allow-Credentials', 'true');
@@ -17,8 +20,11 @@ app.use(function (req, res, next) {
     }
 });
 
-app.get(config.apiEndpointBase, (req, res) => {
-    res.send(`CMS API ${config.apiVersion}. RUN command <curl -I localhost:3000> for details.`)
+app.use(bodyParser.json());
+UsersRouter.routesConfig(app);
+
+app.get(appConfig.apiEndpointBase, (req, res) => {
+    res.send(`CMS API ${appConfig.apiVersion}. RUN command <curl -I localhost:${appConfig.port}> for details.`)
 });
 
 module.exports = app;
