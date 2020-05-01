@@ -1,10 +1,9 @@
 module.exports = {
-    "secret": "myS33!!creeeT",
-    "expiration": 36000,//in SECONDS
+    "secret": "life is beautiful, when it is beautiful!",
+    "expiration": 18000,//30 MINUTES in SECONDS
     "permissionLevels": {
-        "EDITOR": 1,
-        "REVIEWER": 4,
-        "PUBLISHER": 8,
-        "ADMIN": 512
+        "VIEWER": 1,
+        "EDITOR": 2,
+        "ADMIN": 128
     }
 };

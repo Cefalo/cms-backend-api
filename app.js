@@ -2,6 +2,7 @@ const express = require('express');
 const logger = require('morgan');
 const bodyParser = require('body-parser');
 const UsersRouter = require('./routes/users.route');
+const AuthRouter = require('./routes/auth.route');
 const appConfig = require('./configs/app.config');
 const app = express();
 
@@ -22,6 +23,7 @@ app.use(function (req, res, next) {
 
 app.use(bodyParser.json());
 UsersRouter.routesConfig(app);
+AuthRouter.routesConfig(app);
 
 app.get(appConfig.apiEndpointBase, (req, res) => {
     res.send(`CMS API ${appConfig.apiVersion}. RUN command <curl -I localhost:${appConfig.port}> for details.`)
