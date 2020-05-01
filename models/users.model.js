@@ -3,7 +3,7 @@ const mongoose = require('../services/db.service').mongoose;
 const userSchema = new mongoose.Schema({
     firstName: {type: String, required: true, trim: true},
     lastName: {type: String, required: true, trim: true},
-    email: {type: String, required: true, trim: true},
+    email: {type: String, unique: true, required: true, trim: true},
     password: {type: String, required: true},
     permissionLevel: {type: Number, default: 1},
     createdAt: {type: Date, default: Date.now},
@@ -30,7 +30,7 @@ userSchema.findById = function (cb) {
 
 
 exports.findByEmail = (email) => {
-    return Users.find({email: email});
+    return Users.findOne({email: email});
 };
 
 exports.findById = (id) => {

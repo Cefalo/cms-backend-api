@@ -7,7 +7,8 @@ exports.routesConfig = function (app) {
         //Pass validation rules
         VerifyUserMiddleware.registrationFieldValidationRules(), [
             //Validate the rule(s)
-            VerifyUserMiddleware.validateRules
+            VerifyUserMiddleware.validateRules,
+            VerifyUserMiddleware.isEmailAlreadyExists
         ],
         //Pass the actual operation middleware
         UsersController.insert);
@@ -17,15 +18,17 @@ exports.routesConfig = function (app) {
     ]);
 
     app.get(`${appConfig.apiEndpointBase}/users/:userId`, [
-        UsersController.getById
-    ]);
+            VerifyUserMiddleware.verifyUserId
+        ], UsersController.getById
+    );
 
     app.patch(`${appConfig.apiEndpointBase}/users/:userId`,
         VerifyUserMiddleware.updatePasswordValidationRules(), [
             VerifyUserMiddleware.validateRules,
+            VerifyUserMiddleware.verifyUserId
         ], UsersController.patchById);
 
     app.delete(`${appConfig.apiEndpointBase}/users/:userId`, [
-        UsersController.removeById
-    ]);
+        VerifyUserMiddleware.verifyUserId
+    ], UsersController.removeById);
 };

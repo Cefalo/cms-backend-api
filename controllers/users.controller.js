@@ -21,6 +21,7 @@ exports.list = (req, res) => {
             page = Number.isInteger(req.query.page) ? req.query.page : 0;
         }
     }
+
     UserModel.list(limit, page)
         .then((result) => {
             res.status(200).send(result);
