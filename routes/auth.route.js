@@ -10,4 +10,6 @@ exports.routesConfig = function (app) {
             AuthValidationMiddleware.matchEmailAndPassword
         ], AuthorizationController.login
     ]);
+
+    app.get('/auth/logout', AuthorizationController.logout);
 };

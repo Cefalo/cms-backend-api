@@ -1,6 +1,9 @@
 const UsersController = require('../controllers/users.controller');
+
 const UserValidationMiddleware = require('../middlewares/user.validation.middleware');
 const FieldValidateMiddleware = require('../middlewares/field.validation.middleware');
+const AuthValidationMiddleware = require("../middlewares/auth.validation.middleware");
+
 const appConfig = require('../configs/app.config');
 
 exports.routesConfig = function (app) {
@@ -15,21 +18,23 @@ exports.routesConfig = function (app) {
         UsersController.insert);
 
     app.get(`${appConfig.apiEndpointBase}/users`, [
-        UsersController.list
-    ]);
+        AuthValidationMiddleware.verifyJwtToken
+    ], UsersController.list);
 
     app.get(`${appConfig.apiEndpointBase}/users/:userId`, [
-            UserValidationMiddleware.verifyUserId
-        ], UsersController.getById
-    );
+        UserValidationMiddleware.verifyUserId,
+        AuthValidationMiddleware.verifyJwtToken
+    ], UsersController.getById);
 
     app.patch(`${appConfig.apiEndpointBase}/users/:userId`,
         UserValidationMiddleware.updatePasswordValidationRules(), [
             FieldValidateMiddleware.validateRules,
-            UserValidationMiddleware.verifyUserId
+            UserValidationMiddleware.verifyUserId,
+            AuthValidationMiddleware.verifyJwtToken
         ], UsersController.patchById);
 
     app.delete(`${appConfig.apiEndpointBase}/users/:userId`, [
-        UserValidationMiddleware.verifyUserId
+        UserValidationMiddleware.verifyUserId,
+        AuthValidationMiddleware.verifyJwtToken
     ], UsersController.removeById);
 };

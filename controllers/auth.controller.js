@@ -16,3 +16,7 @@ exports.login = (req, res) => {
         res.status(500).send({errors: err});
     }
 };
+
+exports.logout = (req, res) => {
+    res.status(204).send({accessToken: null, refreshToken: null});
+};
