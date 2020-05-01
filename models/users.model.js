@@ -1,12 +1,16 @@
 const mongoose = require('../services/db.service').mongoose;
 
 const userSchema = new mongoose.Schema({
-    firstName: String,
-    lastName: String,
-    email: String,
-    password: String,
-    permissionLevel: Number
+    firstName: {type: String, required: true, trim: true},
+    lastName: {type: String, required: true, trim: true},
+    email: {type: String, required: true, trim: true},
+    password: {type: String, required: true},
+    permissionLevel: {type: Number, default: 1},
+    createdAt: {type: Date, default: Date.now},
+    lastModified: {type: Date, default: Date.now}
 });
+
+const Users = mongoose.model('User', userSchema);
 
 // Rather than exposing Document's _id expose virtual id fields that is derived from _id
 // Remember you can not query by virtual fields in Mongoose
@@ -24,14 +28,13 @@ userSchema.findById = function (cb) {
     return this.model('User').find({id: this.id}, cb);
 };
 
-const UsersModel = mongoose.model('User', userSchema);
-
 
 exports.findByEmail = (email) => {
-    return UsersModel.find({email: email});
+    return Users.find({email: email});
 };
+
 exports.findById = (id) => {
-    return UsersModel.findById(id)
+    return Users.findById(id)
         .then((result) => {
             result = result.toJSON();
             delete result._id;
@@ -41,13 +44,13 @@ exports.findById = (id) => {
 };
 
 exports.createUser = (userData) => {
-    const user = new UsersModel(userData);
+    const user = new Users(userData);
     return user.save();
 };
 
 exports.list = (perPage, page) => {
     return new Promise((resolve, reject) => {
-        UsersModel.find()
+        Users.find()
             .limit(perPage)
             .skip(perPage * page)
             .exec(function (err, users) {
@@ -62,7 +65,7 @@ exports.list = (perPage, page) => {
 
 exports.patchUser = (id, userData) => {
     return new Promise((resolve, reject) => {
-        UsersModel.findById(id, function (err, user) {
+        Users.findById(id, function (err, user) {
             if (err) reject(err);
             for (let i in userData) {
                 user[i] = userData[i];
@@ -78,7 +81,7 @@ exports.patchUser = (id, userData) => {
 
 exports.removeById = (userId) => {
     return new Promise((resolve, reject) => {
-        UsersModel.remove({_id: userId}, (err) => {
+        Users.remove({_id: userId}, (err) => {
             if (err) {
                 reject(err);
             } else {

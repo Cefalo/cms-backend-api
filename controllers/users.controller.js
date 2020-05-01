@@ -31,8 +31,9 @@ exports.getById = (req, res) => {
     UserModel.findById(req.params.userId)
         .then((result) => {
             res.status(200).send(result);
-        });
+        }).catch(err => res.status(400).send({'message': err.message}));
 };
+
 exports.patchById = (req, res) => {
     if (req.body.password) {
         let salt = crypto.randomBytes(16).toString('base64');
