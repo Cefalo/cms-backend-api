@@ -5,8 +5,9 @@ const VerifyAuthMiddleware = require("../middlewares/verify.auth.middleware");
 exports.routesConfig = function (app) {
 
     app.post('/auth/token', [
-        VerifyAuthMiddleware.authFieldValidationRules(),
-        [FieldValidateMiddleware.validateRules],
-        AuthorizationController.login
+        VerifyAuthMiddleware.authFieldValidationRules(), [
+            FieldValidateMiddleware.validateRules,
+            VerifyAuthMiddleware.matchEmailAndPassword
+        ], AuthorizationController.login
     ]);
 };

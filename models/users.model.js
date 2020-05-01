@@ -45,6 +45,7 @@ exports.findById = (id) => {
 
 exports.createUser = (userData) => {
     const user = new Users(userData);
+
     return user.save();
 };
 
