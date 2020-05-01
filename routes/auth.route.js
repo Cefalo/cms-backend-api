@@ -1,13 +1,13 @@
 const AuthorizationController = require('../controllers/auth.controller');
-const FieldValidateMiddleware = require("../middlewares/field.validate.middleware");
-const VerifyAuthMiddleware = require("../middlewares/verify.auth.middleware");
+const FieldValidateMiddleware = require("../middlewares/field.validation.middleware");
+const AuthValidationMiddleware = require("../middlewares/auth.validation.middleware");
 
 exports.routesConfig = function (app) {
 
     app.post('/auth/token', [
-        VerifyAuthMiddleware.authFieldValidationRules(), [
+        AuthValidationMiddleware.authFieldValidationRules(), [
             FieldValidateMiddleware.validateRules,
-            VerifyAuthMiddleware.matchEmailAndPassword
+            AuthValidationMiddleware.matchEmailAndPassword
         ], AuthorizationController.login
     ]);
 };

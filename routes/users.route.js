@@ -1,15 +1,15 @@
 const UsersController = require('../controllers/users.controller');
-const VerifyUserMiddleware = require('../middlewares/verify.user.middleware');
-const FieldValidateMiddleware = require('../middlewares/field.validate.middleware');
+const UserValidationMiddleware = require('../middlewares/user.validation.middleware');
+const FieldValidateMiddleware = require('../middlewares/field.validation.middleware');
 const appConfig = require('../configs/app.config');
 
 exports.routesConfig = function (app) {
     app.post(`${appConfig.apiEndpointBase}/users`,
         //Pass validation rules
-        VerifyUserMiddleware.registrationFieldValidationRules(), [
+        UserValidationMiddleware.registrationFieldValidationRules(), [
             //Validate the rule(s)
             FieldValidateMiddleware.validateRules,
-            VerifyUserMiddleware.isEmailAlreadyExists
+            UserValidationMiddleware.isEmailAlreadyExists
         ],
         //Pass the actual operation middleware
         UsersController.insert);
@@ -19,17 +19,17 @@ exports.routesConfig = function (app) {
     ]);
 
     app.get(`${appConfig.apiEndpointBase}/users/:userId`, [
-            VerifyUserMiddleware.verifyUserId
+            UserValidationMiddleware.verifyUserId
         ], UsersController.getById
     );
 
     app.patch(`${appConfig.apiEndpointBase}/users/:userId`,
-        VerifyUserMiddleware.updatePasswordValidationRules(), [
+        UserValidationMiddleware.updatePasswordValidationRules(), [
             FieldValidateMiddleware.validateRules,
-            VerifyUserMiddleware.verifyUserId
+            UserValidationMiddleware.verifyUserId
         ], UsersController.patchById);
 
     app.delete(`${appConfig.apiEndpointBase}/users/:userId`, [
-        VerifyUserMiddleware.verifyUserId
+        UserValidationMiddleware.verifyUserId
     ], UsersController.removeById);
 };
