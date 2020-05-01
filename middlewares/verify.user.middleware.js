@@ -1,7 +1,7 @@
 const mongoose = require('../services/db.service').mongoose;
 const UserModel = require('../models/users.model');
 
-const {check, validationResult} = require('express-validator');
+const {check} = require('express-validator');
 
 exports.registrationFieldValidationRules = () => {
     return [
@@ -47,19 +47,5 @@ exports.updatePasswordValidationRules = () => {
         // password must be at least 8 chars long
         check('password', 'password must be at least 8 chars long').isLength({min: 8})
     ]
-};
-
-exports.validateRules = (req, res, next) => {
-    const errors = validationResult(req);
-    if (errors.isEmpty()) {
-        return next();
-    }
-
-    const extractedErrors = [];
-    errors.array().map(err => extractedErrors.push({[err.param]: err.msg}));
-
-    return res.status(400).json({
-        errors: extractedErrors,
-    });
 };
 
