@@ -23,10 +23,12 @@ exports.registrationFieldValidationRules = () => {
 exports.isEmailAlreadyExists = (req, res, next) => {
     UserModel.findByEmail(req.body.email)
         .then((result) => {
-            if (result) return res.status(409).json({message: 'Email already in use.'});
+            if (result) {
+                return res.status(409).json({message: 'Email already in use.'});
+            } else {
+                return next();
+            }
         }).catch(err => res.status(500).json({errors: err}));
-
-    return next();
 };
 
 exports.verifyUserId = (req, res, next) => {
