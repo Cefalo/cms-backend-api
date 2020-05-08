@@ -18,6 +18,17 @@ var User = new Schema({
     }
 });
 
-User.plugin(passportLocalMongoose);
+User.plugin(passportLocalMongoose,{
+    usernameLowerCase:true,
+    passwordValidator : (password,cb)=>{
+        if (!password.trim()) {
+            return cb('Password can not be empty!');
+        }else if(password.trim().length<8){
+            return cb('Password must be at least 8 chars long');
+        }
+        // return an empty cb() on success
+        return cb()
+      }
+});
 
 module.exports = mongoose.model('User', User);
