@@ -1,5 +1,5 @@
 const express = require('express');
-const logger = require('morgan');
+const morgan = require('morgan');
 const fs = require('fs')
 const { connect } = require('mongoose')
 const {success, error, info, log} = require('consola');
@@ -9,6 +9,23 @@ const {DB, PORT} = require('./config/application');
 
 //Initialize the application
 const app = express();
+
+//Middleware
+app.use(morgan('tiny'));
+app.use(express.json());
+app.use(function (err, req, res, next) {
+    if (err instanceof SyntaxError) {
+        error({message:err, badge:true})
+        return res.status(400).json({message:err.message})
+    }else{
+        next();
+    } 
+    
+  });
+
+
+//Router middleware
+app.use('/api/user', require('./routes/users'));
 
 let retryAttemptCount = 5;
 const startApp = async function(){
