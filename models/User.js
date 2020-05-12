@@ -14,11 +14,24 @@ const UserSchema = new Schema({
     },
     email:{
         type:String,
-        required:true
+        validate: {
+            validator: function(v) {
+                return /[a-zA-Z0-9._%+-]+@(?:[a-zA-Z0-9-]+\.)+[a-zA-Z]{2,}$/.test(v);
+            },
+            message: props => `${props.value} is not a valid email address!`
+        },
+        required: [true, 'User email address required']
+
     },
     password:{
         type:String,
-        required:true
+        validate: {
+            validator: function(v) {
+                return new RegExp('^[a-zA-Z0-9]{3,30}$').test(v);
+            },
+            message: props => `password is invalid`
+        },
+        required: [true, 'User password required']
     },
     role:{
         type:String,
@@ -31,5 +44,8 @@ const UserSchema = new Schema({
         enum:['new', 'verified']
     }
 }, {timestamps: true});
+
+//use validation manually before password hashing
+UserSchema.set('validateBeforeSave', false);
 
 module.exports = model('users', UserSchema);

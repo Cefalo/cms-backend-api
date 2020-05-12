@@ -16,9 +16,15 @@ const { success, error, info } = require('consola');
 
         const hashPassword = await bcrypt.hash(userDets.password, 12);
         const newUser = new User({
-            ...userDets,
-            password: hashPassword
+            ...userDets
+            
         });
+
+        
+        // validate all field befor hashed the password
+        await newUser.validate();
+
+        newUser.password = hashPassword;
 
         await newUser.save();
         
