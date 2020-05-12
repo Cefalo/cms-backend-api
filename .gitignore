@@ -49,6 +49,7 @@ Temporary Items
 node_modules
 dist
 .idea
+data
 application.log
 static/files/*
 cache_temp/*
@@ -56,3 +57,4 @@ static_temp/*
 .vscode
 notice-config.js
 package-lock.json
+variables.env

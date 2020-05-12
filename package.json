@@ -4,8 +4,13 @@
   "description": "Simple CMS backend",
   "main": "app.js",
   "scripts": {
-    "start": "node app.js",
-    "test": "mocha"
+    "prod": "node ./start.js",
+    "watch": "nodemon ./start.js --ignore public/",
+    "start": "concurrently \"npm run watch\" \"npm run assets\" --names \"💻,📦\" --prefix name",
+    "assets": "webpack -w --display-max-modules 0",
+    "sample": "node ./data/load-sample-data.js",
+    "blowitallaway": "node ./data/load-sample-data.js --delete",
+    "now": "now -e DB_USER=@db_user -e DB_PASS=@db_pass -e NODE_ENV=\"production\" -e PORT=80"
   },
   "author": "Satyajit Dey<satyajit@cefalo.com>",
   "contributors": [
@@ -29,6 +34,7 @@
   "license": "ISC",
   "dependencies": {
     "express": "4.17.1",
+    "mongoose": "^5.9.13",
     "morgan": "1.10.0",
     "passport": "0.4.1"
   },
