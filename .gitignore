@@ -55,4 +55,5 @@ cache_temp/*
 static_temp/*
 .vscode
 notice-config.js
-package-lock.json
+#package-lock.json
+.env
