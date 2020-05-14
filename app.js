@@ -1,34 +1,35 @@
-var debug = require('debug')('cms-backend-api:*');
-var express = require('express');
-var logger = require('morgan');
-var mongoose=require('mongoose');
+const express = require('express');
+const logger = require('morgan');
+const bodyParser = require('body-parser');
+const UsersRouter = require('./routes/users.route');
+const AuthRouter = require('./routes/auth.route');
 
-//custom modules
-var indexRouter = require('./routes/index');
-var usersRouter = require('./routes/users');
-
-//connect to database
-var connect = mongoose.connect(process.env.DB_URL,{
-    autoIndex: false,
-    useNewUrlParser: true,
-    useUnifiedTopology: true
-});
-
-connect.then((db) => {
-    debug('Connected to database ' + process.env.DB_URL);
-}, (err) => { console.log(err); });
-
-
-
-var app = express();
+const app = express();
 
 //middleware
 app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
-//routes
-app.use('/', indexRouter);
-app.use('/users', usersRouter);
+app.use(function (req, res, next) {
+    res.header('Access-Control-Allow-Origin', '*');
+    res.header('Access-Control-Allow-Credentials', 'true');
+    res.header('Access-Control-Allow-Methods', 'GET,HEAD,PUT,PATCH,POST,DELETE');
+    res.header('Access-Control-Expose-Headers', 'Content-Length');
+    res.header('Access-Control-Allow-Headers', 'Accept, Authorization, Content-Type, X-Requested-With, Range');
+    if (req.method === 'OPTIONS') {
+        return res.send(200);
+    } else {
+        return next();
+    }
+});
+
+app.use(bodyParser.json());
+UsersRouter.routesConfig(app);
+AuthRouter.routesConfig(app);
+
+app.get(process.env.API_ENPOINT_BASE, (req, res) => {
+    res.send(`CMS API v1.`)
+});
 
 module.exports = app;
