@@ -3,9 +3,11 @@
 /**
  * Module dependencies.
  */
+const dotenv = require('dotenv');
+dotenv.config();
 
 var app = require('../app');
-var debug = require('debug')('cms-backend-api:server');
+var debug = require('debug')('cms-backend-api:*');
 var http = require('http');
 
 /**
