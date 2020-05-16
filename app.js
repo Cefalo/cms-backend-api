@@ -5,6 +5,7 @@ const bodyParser = require('body-parser');
 
 const authRouter = require('./routes/auth.route');
 const usersRouter = require('./routes/users.route');
+const binaryRouter=require('./routes/binaries.route');
 
 const app = express();
 
@@ -31,6 +32,7 @@ app.use(bodyParser.json());
 //List all the routes
 app.use('/auth', authRouter);
 app.use(`${process.env.API_ENPOINT_BASE}/users`, usersRouter);
+app.use(`${process.env.API_ENPOINT_BASE}/binaries`, binaryRouter);
 
 app.get(process.env.API_ENPOINT_BASE, (req, res) => {
     res.send(`CMS API v1.`)
