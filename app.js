@@ -1,8 +1,10 @@
 const express = require('express');
 const logger = require('morgan');
+
 const bodyParser = require('body-parser');
-const UsersRouter = require('./routes/users.route');
-const AuthRouter = require('./routes/auth.route');
+
+const authRouter = require('./routes/auth.route');
+const usersRouter = require('./routes/users.route');
 
 const app = express();
 
@@ -25,8 +27,10 @@ app.use(function (req, res, next) {
 });
 
 app.use(bodyParser.json());
-UsersRouter.routesConfig(app);
-AuthRouter.routesConfig(app);
+
+//List all the routes
+app.use('/auth', authRouter);
+app.use(`${process.env.API_ENPOINT_BASE}/users`, usersRouter);
 
 app.get(process.env.API_ENPOINT_BASE, (req, res) => {
     res.send(`CMS API v1.`)
