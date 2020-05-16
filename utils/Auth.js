@@ -1,6 +1,9 @@
 const User = require('../models/User');
 const bcrypt = require('bcryptjs');
+const jwt = require('jsonwebtoken');
 const { success, error, info } = require('consola');
+
+const { SECRET } = require('../config/application');
 
 /**
  * @DESC To register the user
@@ -36,6 +39,45 @@ const { success, error, info } = require('consola');
 
  }
 
+ const userLogin = async (userCreds, role, res) => {
+     let {userName, password} = userCreds;
+
+     //check is userName exists
+     const user = await User.findOne({userName});
+     if(!user){
+         throw new Error(`No user found. Invalid login credentials.`)
+     }
+
+     //check role
+     if(user.role !== role){
+         throw new Error(`Please make sure you are loging in from the right portal`);
+     }
+
+     //matche password
+     let passMatch = await bcrypt.compare(password, user.password);
+     if(passMatch){
+         //sign the token and issue it to the user
+         let token = jwt.sign({
+             userid: user._id,
+             role: user.role,
+             name: user.userName,
+             email: user.email
+         }, SECRET, {expiresIn: '5 min'});
+
+         return {
+            userName: user.userName,
+            role: user.role,
+            email: user.email,
+            token: `Bearer ${token}`,
+            expiresIn: 5
+        }
+
+     }else{
+        throw new Error(`Incorrect password.`)
+     }
+
+ }
+
  const validateUsername = async(userName) => {
      let user = await User.findOne({userName});
      return user ? true : false;
@@ -43,4 +85,4 @@ const { success, error, info } = require('consola');
 
 
 
-module.exports = { userRegistration}
+module.exports = { userRegistration, userLogin }
