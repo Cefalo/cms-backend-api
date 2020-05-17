@@ -40,41 +40,41 @@ const { SECRET } = require('../config/application');
  }
 
  const userLogin = async (userCreds, role, res) => {
-     let {userName, password} = userCreds;
+    //  let {userName, password} = userCreds;
 
-     //check is userName exists
-     const user = await User.findOne({userName});
-     if(!user){
-         throw new Error(`No user found. Invalid login credentials.`)
-     }
+    //  //check is userName exists
+    //  const user = await User.findOne({userName});
+    //  if(!user){
+    //      throw new Error(`No user found. Invalid login credentials.`)
+    //  }
 
-     //check role
-     if(user.role !== role){
-         throw new Error(`Please make sure you are loging in from the right portal`);
-     }
+    //  //check role
+    //  if(user.role !== role){
+    //      throw new Error(`Please make sure you are loging in from the right portal`);
+    //  }
 
-     //matche password
-     let passMatch = await bcrypt.compare(password, user.password);
-     if(passMatch){
-         //sign the token and issue it to the user
-         let token = jwt.sign({
-             userid: user._id,
-             role: user.role,
-             name: user.userName,
-             email: user.email
-         }, SECRET, {expiresIn: '5 min'});
+    //  //matche password
+    //  let passMatch = await bcrypt.compare(password, user.password);
+    //  if(passMatch){
+    //      //sign the token and issue it to the user
+    //      let token = jwt.sign({
+    //          userid: user._id,
+    //          role: user.role,
+    //          name: user.userName,
+    //          email: user.email
+    //      }, SECRET, {expiresIn: '5 min'});
 
-         return {
-            userName: user.userName,
-            role: user.role,
-            email: user.email,
-            token: `Bearer ${token}`,
-            expiresIn: 5
-        }
+    //      return {
+    //         userName: user.userName,
+    //         role: user.role,
+    //         email: user.email,
+    //         token: `Bearer ${token}`,
+    //         expiresIn: 5
+    //     }
 
-     }else{
-        throw new Error(`Incorrect password.`)
-     }
+    //  }else{
+    //     throw new Error(`Incorrect password.`)
+    //  }
 
  }
 

@@ -5,7 +5,7 @@ const { connect } = require('mongoose')
 const {success, error, info, log} = require('consola');
 
 //Bring the app constants
-const {DB, PORT} = require('./config/application');
+const {DB, PORT} = require('./src/config/application');
 
 //Initialize the application
 const app = express();
@@ -13,6 +13,8 @@ const app = express();
 //Middleware
 app.use(morgan('tiny'));
 app.use(express.json());
+require('./src/config/passport')(app);
+
 app.use(function (err, req, res, next) {
     if (err instanceof SyntaxError) {
         error({message:err, badge:true})
@@ -25,7 +27,7 @@ app.use(function (err, req, res, next) {
 
 
 //Router middleware
-app.use('/api/user', require('./routes/users'));
+app.use('/api/user', require('./src/routes/users'));
 
 let retryAttemptCount = 5;
 const startApp = async function(){
