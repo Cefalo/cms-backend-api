@@ -150,9 +150,17 @@ router.route('/:articleId')
         if (mongoose.Types.ObjectId.isValid(req.params.articleId)) {
             Article.findByIdAndRemove(req.params.articleId)
                 .then((resp) => {
-                    res.statusCode = 200;
-                    res.setHeader('Content-Type', 'application/json');
-                    res.json(resp);
+                    if(null===resp){
+                        var err = new Error('Article ' + req.params.articleId + ' not found');
+                        err.status = 404;
+                        return next(err);
+                    }
+                    else{
+                        res.statusCode = 200;
+                        res.setHeader('Content-Type', 'application/json');
+                        res.json(resp);
+                    }
+                    
                 }, (err) => next(err))
                 .catch((err) => next(err));
         }
