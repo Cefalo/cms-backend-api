@@ -11,13 +11,12 @@ var articleSchema = new Schema({
         type:String,
         require:true
     },
-    body:[String]
-    /* un-comment after #1 is added to development 
+    body:[String],
     author: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User',
         required: true,
-    } */
+    }
 }, {
     timestamps: true
 });
