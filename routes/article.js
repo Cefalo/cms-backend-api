@@ -74,6 +74,10 @@ router.route('/')
     .put((req, res, next) => {
         res.statusCode = 403;
         res.end('PUT operation not supported on /article');
+    })
+    .delete((req, res, next) => {
+        res.statusCode = 403;
+        res.end('DELETE operation not supported on /article');
     });
 
 
@@ -136,7 +140,23 @@ router.route('/:articleId')
                 }, (err) => next(err))
                 .catch((err) => next(err));
         }
-        else{
+        else {
+            var err = new Error('Article ' + req.params.articleId + ' not found');
+            err.status = 404;
+            return next(err);
+        }
+    })
+    .delete((req, res, next) => {
+        if (mongoose.Types.ObjectId.isValid(req.params.articleId)) {
+            Article.findByIdAndRemove(req.params.articleId)
+                .then((resp) => {
+                    res.statusCode = 200;
+                    res.setHeader('Content-Type', 'application/json');
+                    res.json(resp);
+                }, (err) => next(err))
+                .catch((err) => next(err));
+        }
+        else {
             var err = new Error('Article ' + req.params.articleId + ' not found');
             err.status = 404;
             return next(err);

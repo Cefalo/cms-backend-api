@@ -41,7 +41,7 @@ describe("Test POST /article/:articleId", () => {
       .then(response => {
         expect(response.statusCode).toBe(200);
         const articles = JSON.parse(response.text);
-        if (articles && article.length) {
+        if (articles && articles.length) {
           request(app)
             .get("/article/"+articles[0]._id)
             .then(response => {
@@ -65,7 +65,7 @@ describe("Test PUT /article/:articleId", () => {
         expect(response.statusCode).toBe(200);
 
         const articles = JSON.parse(response.text);
-        if (articles && article.length) {
+        if (articles && articles.length) {
           let art=articles[0],
             newTitle='Test: Hello test world';
 
@@ -78,6 +78,31 @@ describe("Test PUT /article/:articleId", () => {
               expect(resp.statusCode).toBe(200);
               const respArticle = JSON.parse(resp.text);
               expect(respArticle.title).toBe(newTitle);
+              done();
+            });
+        }
+        else {
+          done();
+        }
+      });
+  });
+});
+
+/* DELETE /article/:artId */
+describe("Test DELETE /article/:articleId", () => {
+  test("It should response 200 on DELETE method", done => {
+    request(app)
+      .get("/article")
+      .then(response => {
+        expect(response.statusCode).toBe(200);
+
+        const articles = JSON.parse(response.text);
+        if (articles && articles.length) {
+          let artId=articles[0]._id;
+            request(app)
+            .delete("/article/"+artId)
+            .then(resp => {
+              expect(resp.statusCode).toBe(200);
               done();
             });
         }

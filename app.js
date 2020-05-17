@@ -12,7 +12,8 @@ var articleRouter = require('./routes/article');
 var connect = mongoose.connect(process.env.DB_URL,{
     autoIndex: false,
     useNewUrlParser: true,
-    useUnifiedTopology: true
+    useUnifiedTopology: true,
+    useFindAndModify: false
 });
 
 connect.then((db) => {
