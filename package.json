@@ -2,20 +2,53 @@
   "name": "cms-backend-api",
   "version": "1.0.0",
   "private": true,
+  "description": "Simple CMS backend",
   "scripts": {
     "start": "node ./bin/www",
     "test": "jest --detectOpenHandles --forceExit"
   },
+  "author": "Satyajit Dey<satyajit@cefalo.com>",
+  "contributors": [
+    {
+      "name": "Ahmed Maruf",
+      "email": "maruf@cefalo.com"
+    },
+    {
+      "name": "Atiqul Alam",
+      "email": "atiqul@cefalo.com"
+    },
+    {
+      "name": "Rezaul Karim",
+      "email": "tito@cefalo.com"
+    },
+    {
+      "name": "Satyajit Dey",
+      "email": "satyajit@cefalo.com"
+    }
+  ],
+  "license": "ISC",
   "dependencies": {
+    "aws-sdk": "2.678.0",
+    "body-parser": "1.19.0",
     "debug": "2.6.9",
-    "dotenv": "^8.2.0",
-    "express": "4.16.1",
-    "mongodb": "^3.5.7",
-    "mongoose": "^5.9.14",
-    "morgan": "1.9.1"
+    "dotenv": "8.2.0",
+    "express": "4.17.1",
+    "express-validator": "6.4.0",
+    "jsonwebtoken": "8.5.1",
+    "mongoose": "5.9.10",
+    "morgan": "1.10.0",
+    "multer": "1.4.2",
+    "passport": "0.4.1"
   },
   "devDependencies": {
-    "jest": "^26.0.1",
-    "supertest": "^4.0.2"
+    "eslint": "6.8.0",
+    "mocha": "7.1.2",
+    "nodemon": "2.0.3",
+    "jest": "26.0.1",
+    "supertest": "4.0.2"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Cefalo/cms-backend-api.git"
   }
 }
