@@ -1,5 +1,6 @@
 var debug = require('debug')
 var express = require('express');
+var mongoose = require('mongoose');
 var bodyParser = require('body-parser');
 var slugify = require('slugify')
 
@@ -34,7 +35,7 @@ var createUniqueUrl = (title, callBack, counter = 0) => {
 router.route('/')
     .get((req, res, next) => {
         Article.find({})
-            .sort({'updatedAt':-1})
+            .sort({ 'updatedAt': -1 })
             .limit(5)
             .exec(function (err, articles) {
                 if (err) {
@@ -70,5 +71,76 @@ router.route('/')
             })
         });
     })
+    .put((req, res, next) => {
+        res.statusCode = 403;
+        res.end('PUT operation not supported on /article');
+    });
+
+
+/* with id */
+router.route('/:articleId')
+    .get((req, res, next) => {
+        Article.findById(req.params.articleId)
+            //.populate('author')
+            .then((article) => {
+                res.statusCode = 200;
+                res.setHeader('Content-Type', 'application/json');
+                res.json(article);
+            }, (err) => next(err))
+            .catch((err) => next(err));
+    })
+    .post((req, res, next) => {
+        res.statusCode = 403;
+        res.end('POST operation not supported on /article/' + req.params.articleId);
+    })
+    .put((req, res, next) => {
+
+        if (mongoose.Types.ObjectId.isValid(req.params.articleId)) {
+
+            Article.findById(req.params.articleId)
+                //.populate('author')
+                .then((article) => {
+
+                    if (null === article) {
+                        var err = new Error('Article ' + req.params.articleId + ' not found');
+                        err.status = 404;
+                        return next(err);
+                    }
+                    else {
+                        //update url as title is changed
+                        if (article.title !== req.body.title) {
+                            createUniqueUrl(req.body.title, (url) => {
+                                Article.findByIdAndUpdate(req.params.articleId, {
+                                    $set: { "title": req.body.title, "url": url, "body": req.body.body }
+                                }, { new: true })
+                                    .then((upudatedArt) => {
+                                        res.statusCode = 200;
+                                        res.setHeader('Content-Type', 'application/json');
+                                        res.json(upudatedArt);
+                                    }, (err) => next(err))
+                                    .catch((err) => next(err));
+                            });
+                        }
+                        else {
+                            Article.findByIdAndUpdate(req.params.articleId, {
+                                $set: req.body
+                            }, { new: true })
+                                .then((upudatedArt) => {
+                                    res.statusCode = 200;
+                                    res.setHeader('Content-Type', 'application/json');
+                                    res.json(upudatedArt);
+                                }, (err) => next(err))
+                                .catch((err) => next(err));
+                        }
+                    }
+                }, (err) => next(err))
+                .catch((err) => next(err));
+        }
+        else{
+            var err = new Error('Article ' + req.params.articleId + ' not found');
+            err.status = 404;
+            return next(err);
+        }
+    });
 
 module.exports = router;
