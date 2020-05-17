@@ -4,7 +4,7 @@ const app = require("../../app");
 describe("Test GET /article", () => {
   test("It should response 200 on GET method", done => {
     request(app)
-      .get("/article")
+      .get(`${process.env.API_ENPOINT_BASE}/article`)
       .then(response => {
         expect(response.statusCode).toBe(200);
         done();
@@ -22,7 +22,7 @@ const article = {
 describe("Test POST /article", () => {
   test("It should response 200 on POST method", done => {
     request(app)
-      .post("/article")
+      .post(`${process.env.API_ENPOINT_BASE}/article`)
       .send(article)
       .then(response => {
         const respArticle = JSON.parse(response.text);
@@ -37,13 +37,13 @@ describe("Test POST /article", () => {
 describe("Test POST /article/:articleId", () => {
   test("It should response 200 on GET method", done => {
     request(app)
-      .get("/article")
+      .get(`${process.env.API_ENPOINT_BASE}/article`)
       .then(response => {
         expect(response.statusCode).toBe(200);
         const articles = JSON.parse(response.text);
         if (articles && articles.length) {
           request(app)
-            .get("/article/"+articles[0]._id)
+            .get(`${process.env.API_ENPOINT_BASE}/article/${articles[0]._id}`)
             .then(response => {
               expect(response.statusCode).toBe(200);
               done();
@@ -60,7 +60,7 @@ describe("Test POST /article/:articleId", () => {
 describe("Test PUT /article/:articleId", () => {
   test("It should response 200 on PUT method", done => {
     request(app)
-      .get("/article")
+      .get(`${process.env.API_ENPOINT_BASE}/article`)
       .then(response => {
         expect(response.statusCode).toBe(200);
 
@@ -72,7 +72,7 @@ describe("Test PUT /article/:articleId", () => {
             art.title=newTitle;
 
             request(app)
-            .put("/article/"+art._id)
+            .put(`${process.env.API_ENPOINT_BASE}/article/${art._id}`)
             .send(art)
             .then(resp => {
               expect(resp.statusCode).toBe(200);
@@ -92,7 +92,7 @@ describe("Test PUT /article/:articleId", () => {
 describe("Test DELETE /article/:articleId", () => {
   test("It should response 200 on DELETE method", done => {
     request(app)
-      .get("/article")
+      .get(`${process.env.API_ENPOINT_BASE}/article`)
       .then(response => {
         expect(response.statusCode).toBe(200);
 
@@ -100,7 +100,7 @@ describe("Test DELETE /article/:articleId", () => {
         if (articles && articles.length) {
           let artId=articles[0]._id;
             request(app)
-            .delete("/article/"+artId)
+            .delete(`${process.env.API_ENPOINT_BASE}/article/${artId}`)
             .then(resp => {
               expect(resp.statusCode).toBe(200);
               done();
