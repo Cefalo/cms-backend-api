@@ -16,7 +16,7 @@ const storage = multer.diskStorage({
 
 const upload = multer({storage: storage});
 
-router.get('/images/retrieve/:filename',
+router.get('/images/:id/:filename',
     AuthValidationMiddleware.verifyJwtToken,
     AuthPermissionMiddleware.minimumPermissionLevelRequired(process.env.AUTH_PERMISSION_VIEWER),
     BinariesController.retrieveImage);
