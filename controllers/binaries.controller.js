@@ -13,7 +13,11 @@ exports.uploadImage = (req, res) => {
     uploadFile(req.file.path, req.file.filename, res);
 };
 
-let uploadFile = function (source, target, res) {
+exports.retrieveImage = (req, res) => {
+    retrieveFile(req.params.filename, res);
+};
+
+let uploadFile = (source, target, res) => {
     fs.readFile(source, (err, fileData) => {
         if (err) {
             return res.status(500).send({error: err});
@@ -25,7 +29,7 @@ let uploadFile = function (source, target, res) {
             Body: fileData
         };
 
-        s3.putObject(putParams, (err, data) => {
+        s3.upload(putParams, (err, data) => {
             if (err) {
                 return res.status(500).send({error: err});
             }
@@ -37,6 +41,21 @@ let uploadFile = function (source, target, res) {
 
             return res.send({success: true});
         });
+    });
+};
+
+let retrieveFile = (fileName, res) => {
+    const getParams = {
+        Bucket: process.env.AWS_S3_BUCKET_BINARIES,
+        Key: fileName
+    };
+
+    s3.getObject(getParams, function (err, data) {
+        if (err) {
+            return res.status(400).send({success: false, err: err});
+        } else {
+            return res.send(data);
+        }
     });
 };
 

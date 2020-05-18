@@ -2,6 +2,8 @@ const express = require('express');
 const router = express.Router();
 const multer = require('multer');
 
+const AuthValidationMiddleware = require("../middlewares/auth.validation.middleware");
+const AuthPermissionMiddleware = require("../middlewares/auth.permission.middleware");
 const BinariesController = require('../controllers/binaries.controller');
 
 // configure DiscStorage engine
@@ -14,6 +16,14 @@ const storage = multer.diskStorage({
 
 const upload = multer({storage: storage});
 
-router.post('/images/upload', upload.single('image'), BinariesController.uploadImage);
+router.get('/images/retrieve/:filename',
+    AuthValidationMiddleware.verifyJwtToken,
+    AuthPermissionMiddleware.minimumPermissionLevelRequired(process.env.AUTH_PERMISSION_VIEWER),
+    BinariesController.retrieveImage);
+
+router.post('/images/upload', upload.single('image'),
+    AuthValidationMiddleware.verifyJwtToken,
+    AuthPermissionMiddleware.minimumPermissionLevelRequired(process.env.AUTH_PERMISSION_EDITOR),
+    BinariesController.uploadImage);
 
 module.exports = router;
