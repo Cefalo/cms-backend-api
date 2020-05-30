@@ -55,4 +55,4 @@ cache_temp/*
 static_temp/*
 .vscode
 notice-config.js
-.env
+config
