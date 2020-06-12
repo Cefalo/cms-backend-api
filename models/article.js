@@ -11,7 +11,7 @@ var articleSchema = new Schema(
       type: String,
       require: true,
     },
-    body: [String],
+    body: [{type: Schema.Types.ObjectId, ref: 'Fragment'}],
     author: {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'User',

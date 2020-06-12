@@ -5,8 +5,10 @@ const revisionSchema = new Schema({
 	currentRevision: {type: Number, required: true},
 	revisions:[{
 		revision: {type: Number},
-		frags:[{type: Schema.Types.ObjectId, ref: 'Fragment'}],
-		action: {type: String, enum:['add', 'delete'], default: 'add'}
+		frags:[{
+			operationType:{type:String},
+			fragment: {type: Schema.Types.ObjectId, ref: 'Fragment'}
+		}]
 	}]
 });
 

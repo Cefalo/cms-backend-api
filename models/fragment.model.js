@@ -15,7 +15,7 @@ const fragmentSchema = new Schema({
 		},
 	],
 	//for type figure/image
-	metadata: { type: Schema.Types.ObjectId, ref: 'Image' },
+	image: { type: Schema.Types.ObjectId, ref: 'Image' },
 	//for type 7 iframe
 	iframe: { type: Schema.Types.ObjectId, ref: 'ExternalLink' },
 	//for embed any link
