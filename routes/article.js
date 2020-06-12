@@ -6,6 +6,10 @@ var slugify = require('slugify')
 var auth = require('../middlewares/auth.validation.middleware')
 
 var Article = require('../models/article')
+const Revision = require('../models/revision.model')
+const Fragment = require('../models/fragment.model')
+const Image = require('../models/images.model')
+const ExternalResource = require('../models/external.link.model')
 
 var router = express.Router()
 router.use(bodyParser.json())
@@ -82,7 +86,8 @@ router
   .route('/:articleId')
   .get((req, res, next) => {
     Article.findById(req.params.articleId)
-      .populate('author')
+	  .populate('author')
+	  .populate('body')
       .then(
         (article) => {
           res.statusCode = 200
@@ -199,6 +204,98 @@ router
       err.status = 404
       return next(err)
     }
+  })
+
+/** revision for a single article */
+router
+  .route('/:articleId/revision/')
+  .post(async (req, res, next) => {
+    let baseRevision = req.body.baseRevision
+
+		let frags = req.body.frags
+
+		try{
+			let revisionObj = {
+				'revision': baseRevision,
+				'frags':[]
+			}
+			frags.array.forEach(element => {
+				if(element.type === 'delete'){
+					let fragment = await Fragment.findOne({name:element.name})
+
+					await Article.update(
+						req.params.articleId,
+						{
+							$pull:{ body:fragment._id }
+						}
+					)
+
+					revisionObj.frags.push({'operationType': element.type, 'fragment': fragment})
+					/** if want to remove whole fragment */
+					/**
+					let fragment = await Fragment.findOneAndRemove({name:element.name})
+					await Image.remove({ _id: { $in: fragment.image } })
+					await ExternalResource.remove({ _id: { $in: fragment.iframe } })
+					await ExternalResource.remove({ _id: { $in: fragment.externalResource } })
+					 */
+
+				}else{
+					let fragment = {
+						name: element.name,
+						text: element.text,
+						tag: element.tag,
+						markups: element.markups
+					}
+					if(element.imageId){
+						fragment.image = element.imageId
+					}
+
+					if(element.iframeId){
+						fragment.iframe = element.iframeId
+					}
+
+					if(element.externalResourceId){
+						fragment.externalResource = element.externalResourceId
+					}
+
+					let updatedFrag = await Fragment.update(
+										{name: element.name},
+										fragment,
+										{upsert: true},
+										{new: true}
+									)
+
+					await Article.update(
+						req.params.articleId,
+						{
+							$push: {
+								body: {
+									$each: [updatedFrag],
+									$position: element.lineNumber-1
+								}
+							}
+						}
+					)
+
+					revisionObj.frags.push({'operationType': element.type, 'fragment': updatedFrag})
+
+
+				}
+
+			});
+
+			await Revision.update(
+				{articleId: req.params.articleId},
+				{
+					$set:{currentRevision: baseRevision},
+					$push:{revisions: revisionObj}
+				},
+				{upsert: true}
+			)
+
+		}catch(err){
+			next(err)
+		}
   })
 
 module.exports = router
