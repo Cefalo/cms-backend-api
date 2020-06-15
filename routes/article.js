@@ -210,27 +210,38 @@ router
 router
   .route('/:articleId/revision/')
   .post(async (req, res, next) => {
-    let baseRevision = req.body.baseRevision
+    let baseVersion = req.body.baseVersion
 
 		let frags = req.body.frags
+		let fragEntry
 
 		try{
 			let revisionObj = {
-				'revision': baseRevision,
-				'frags':[]
+				'revision': baseVersion,
+				'frags': []
 			}
-			frags.array.forEach(element => {
-				if(element.type === 'delete'){
-					let fragment = await Fragment.findOne({name:element.name})
 
-					await Article.update(
-						req.params.articleId,
+			for(element of frags) {
+				let frag = {
+					'operationType':'',
+					'fragment': ''
+				};
+				if(element.type === 'delete'){
+					fragEntry = await Fragment.findOne({name:element.name})
+
+					await Article.updateOne(
+						{_id: req.params.articleId},
 						{
-							$pull:{ body:fragment._id }
+							$pull:{ body:fragEntry._id }
 						}
 					)
 
-					revisionObj.frags.push({'operationType': element.type, 'fragment': fragment})
+
+
+					frag.operationType = element.type
+					frag.fragment = fragEntry._id
+
+					revisionObj['frags'].push(frag)
 					/** if want to remove whole fragment */
 					/**
 					let fragment = await Fragment.findOneAndRemove({name:element.name})
@@ -258,40 +269,46 @@ router
 						fragment.externalResource = element.externalResourceId
 					}
 
-					let updatedFrag = await Fragment.update(
+					fragEntry = await Fragment.findOneAndUpdate(
 										{name: element.name},
 										fragment,
-										{upsert: true},
-										{new: true}
+										{upsert: true, new: true}
 									)
 
-					await Article.update(
-						req.params.articleId,
+					await Article.updateOne(
+						{_id: req.params.articleId},
 						{
 							$push: {
 								body: {
-									$each: [updatedFrag],
+									$each: [fragEntry],
 									$position: element.lineNumber-1
 								}
 							}
 						}
 					)
 
-					revisionObj.frags.push({'operationType': element.type, 'fragment': updatedFrag})
+					frag.operationType = element.type
+					frag.fragment = fragEntry._id
+
+					revisionObj['frags'].push(frag)
 
 
 				}
 
-			});
+			}
 
-			await Revision.update(
+			await Revision.updateOne(
 				{articleId: req.params.articleId},
 				{
-					$set:{currentRevision: baseRevision},
+					$set:{currentRevision: baseVersion},
 					$push:{revisions: revisionObj}
 				},
 				{upsert: true}
 			)
+
+			res.statusCode = 200
+			res.setHeader('Content-Type', 'application/json')
+			res.json({nextRevision: Number(baseVersion)+1, frags:fragEntry})
 
 		}catch(err){
 			next(err)
