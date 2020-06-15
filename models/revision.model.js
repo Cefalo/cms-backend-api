@@ -3,13 +3,13 @@ const Schema = mongoose.Schema;
 const revisionSchema = new Schema({
 	articleId:{type: String, required: true, unique: true},
 	currentRevision: {type: Number, required: true},
-	revisions:[{
+	revisions:[new Schema({
 		revision: {type: Number},
-		frags:[{
+		frags:[new Schema({
 			operationType:{type:String},
 			fragment: {type: Schema.Types.ObjectId, ref: 'Fragment'}
-		}]
-	}]
+		},{_id: false})]
+	}, {_id: false})]
 });
 
-const Revision = mongoose.model('Revision', revisionSchema);
+module.exports = mongoose.model('Revision', revisionSchema);

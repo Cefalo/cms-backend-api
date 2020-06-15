@@ -5,4 +5,4 @@ const externalLinkSchema = new Schema({
 	source: { type: String },
 })
 
-const ExternalLink = mongoose.model('ExternalLink', externalLinkSchema)
+module.exports = mongoose.model('ExternalLink', externalLinkSchema)

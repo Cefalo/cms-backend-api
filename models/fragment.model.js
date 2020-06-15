@@ -6,13 +6,15 @@ const fragmentSchema = new Schema({
 	tag: { type: String, require: true }, //'div/p/h3/h4/blockquote/figure/iframe'
 	name: { type: String, require: true }, //unique for an article,
 	text: { type: String, index: true }, //'textContent', (for type image it is caption)
-	markups: [
+	markups: [new Schema(
 		{
 			tag: { type: String }, //'strong/em/a', (1:Bold, 2:italic, 3:anchor)
 			startAt: { type: Number }, //start Tag Position,
 			endAt: { type: Number }, //end Tag Position,
 			href: { type: String }, // for anchore urlString
 		},
+		{_id: false}
+		)
 	],
 	//for type figure/image
 	image: { type: Schema.Types.ObjectId, ref: 'Image' },
@@ -22,4 +24,4 @@ const fragmentSchema = new Schema({
 	externalResource: { type: Schema.Types.ObjectId, ref: 'ExternalLink' },
 })
 
-const Fragment = mongoose.model('Fragment', fragmentSchema)
+module.exports = mongoose.model('Fragment', fragmentSchema)
